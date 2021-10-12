@@ -24,15 +24,18 @@ public class GameBoard implements IGameModel
     private GridPane gridPane;
     TicTacViewController ticTacToeController;
 
-    public int player=2;
-    int[][] handPlayed = { {0,0,0} , {0,0,0} , {0,0,0}};
+    public int player=1;
+    int currentPlayer=1;
+    int[][] handPlayed = { {-1,-1,-1} , {-1,-1,-1} , {-1,-1,-1}};
     int colPlayed;
     int rowPlayed;
-    int winner=0;
+    int winner=-1;
+
     GameBoard gameBoard;
     Button[] btnArray = new Button[9];
     public GameBoard(TicTacViewController t) {
        this.ticTacToeController =t;
+        ticTacToeController=ticTacToeController.getTicTacToeController();
     }
     public GameBoard() {}
     /**
@@ -42,12 +45,14 @@ public class GameBoard implements IGameModel
      */
     public int getNextPlayer()
     {
-        if(player==1) {
-            player = 2;
-          } else if(player==2){
-            player=1;
+        if(player == 1) {
+            currentPlayer=1;
+            return 0;
+          } else {
+            currentPlayer=0;
+            return 1;
         }
-        return player;
+
      }
 
     /**
@@ -63,14 +68,19 @@ public class GameBoard implements IGameModel
     public boolean play(int col, int row)
     {
 
-        ticTacToeController=ticTacToeController.getTicTacToeController();
+
         colPlayed=col;
         rowPlayed=row;
-        if(handPlayed[row][col]==0){
+        if(handPlayed[row][col]==-1){
             handPlayed[row][col]=player;
+            player=getNextPlayer();
+            isGameOver();//done in order to update the array of position and for the check to be made on all the necessary fields
+            //I must admit, I don't know why it doesn't work without it (I mean the test on the TicTacToe,
+            // and this is kind of a dirty to make it work, but that is the only solution I tested that actually
+            //work and provide the right results on the test made by Peter...
             return true;
         } else {
-            getNextPlayer();
+
             return false;
         }
     }
@@ -81,29 +91,36 @@ public class GameBoard implements IGameModel
         boolean isGameOver=false;
         int testDiagInv=0;
         for(int i = handPlayed.length-1; i > -1; i--) {
-            if(handPlayed[i][2-i]==player) {
+            if(handPlayed[i][2-i]==currentPlayer) {
                 testDiagInv++;
             } else {
                 testDiagInv=0;
             }
             if(testDiagInv==3){
-                winner=player;
+                System.out.println("Inv diagonal win");
+                winner=currentPlayer==1?0:1;
                 return true;
             }
 
         }
+
         int testVertical=0;
         for (int i = 0; i < handPlayed.length; i++) {
             testVertical=0;
             for (int k = 0; k < handPlayed.length; k++) {
 
-                if(handPlayed[k][i] ==player){
+                if(handPlayed[k][i] == currentPlayer){
+
                     testVertical++;
+                    //System.out.println("Adding 1 to vertical vertical = "+testVertical);
+                    //System.out.println("handPlayed["+k+"]["+i+"] = "+handPlayed[k][i]);
                 } else {
+
                     testVertical=0;
                 }
                 if(testVertical==3) {
-                    winner=player;
+                    System.out.println("vertical win");
+                    winner=currentPlayer==1?0:1;;
                     return true;
                 }
             }
@@ -113,34 +130,37 @@ public class GameBoard implements IGameModel
             testHorizontal=0;
             for (int k = 0; k < handPlayed.length; k++) {
 
-                if(handPlayed[i][k] ==player){
+                if(handPlayed[i][k] ==currentPlayer){
                     testHorizontal++;
                 } else {
                     testHorizontal=0;
                 }
                 if(testHorizontal==3) {
-                    winner=player;
+                    System.out.println("Horizontal win");
+                    winner=currentPlayer==1?0:1;;
                     return true;
                 }
             }
         }
         int testDiag=0;
         for(int i = 0; i < handPlayed.length; i++) {
-            if(handPlayed[i][i]==player) {
+            if(handPlayed[i][i]==currentPlayer) {
                 testDiag++;
             } else {
                 testDiag=0;
             }
             if(testDiag==3){
-                winner=player;
+                System.out.println("Diagonal win");
+                winner=currentPlayer==1?0:1;;
                 return true;
             }
         }
         for (int i = 0; i < handPlayed.length; i++) {
             for (int k = 0; k < handPlayed.length; k++) {
-                if(handPlayed[i][k]!=0) {
+                if(handPlayed[i][k]!=-1) {
                     isGameOver=true;
-                } else {
+                } else if(winner==-1){
+                    winner=-1;
                     return false;
                 }
             }
@@ -158,8 +178,16 @@ public class GameBoard implements IGameModel
      */
     public int getWinner()
     {
-        if(winner!=0) {
-            return winner;
+        System.out.println("Winner before : "+winner);
+        if(winner!=-1) {
+            if(winner==1) {
+                System.out.println("Winner : "+winner);
+                return 1;
+            } else {
+                System.out.println("Winner : "+winner);
+                return 0;
+            }
+
         } else {
             return -1;
         }
@@ -172,11 +200,13 @@ public class GameBoard implements IGameModel
     {
         for (int i = 0; i < handPlayed.length; i++) {
             for (int k = 0; k < handPlayed.length; k++) {
-                handPlayed[i][k]=0;
+                handPlayed[i][k]=-1;
             }
         }
-        winner=0;
-        player=2;
+        winner=-1;
+        player=1;
+        //getNextPlayer();
+
         //TODO Implement this method
     }
 

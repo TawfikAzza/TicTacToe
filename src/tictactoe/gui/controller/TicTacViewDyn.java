@@ -29,7 +29,7 @@ public class TicTacViewDyn implements Initializable {
     private IGameModelDyna game;
     public VBox vBoxCenter;
     public BorderPane borderPane;
-    int length=6;
+    int length=10;
     private static final String TXT_PLAYER = "Player: ";
     private static int gameStarted=0;
     private Boolean[][] handPlayed;

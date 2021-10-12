@@ -85,45 +85,42 @@ public class TicTacViewController implements Initializable
             numberOfTurns++;
 
 
-            if (game.play(c, r) && Offset==0)
+            if (game.play(c, r))
             {
 
                 if (game.isGameOver())
                 {
-                    if(Offset==0) {
+
                         String xOrO;
                         Button btn = (Button) event.getSource();
                         if(gameType.equals("2 Players")) {
                             currentPlayer = player==1? "1":"2";
-                            xOrO = player == 1 ? "X" : "O";
+                            xOrO = player == 0 ? "X" : "O";
                         } else {
                             currentPlayer = player==1? "1":"A.I";
-                            xOrO = player == 1 ? "X" : "A.I";
+                            xOrO = player == 0 ? "X" : "A.I";
                         }
 
                         btn.setText(xOrO);
 
-                        Offset++;
-                    }
-                    Offset++;
+
                     int winner = game.getWinner();
                     displayWinner(winner);
 
                 }
-                else if(Offset==0)
+                else
                 {
 
                     String xOrO;
                     Button btn = (Button) event.getSource();
                     if(gameType.equals("2 Players")) {
-
-                        currentPlayer = player==1? "1":"2";
+                        currentPlayer = player==0 ? "1":"2";
                         playerDisplayed= currentPlayer.equals("1")?"A.I":"1";
-                        xOrO = player == 1 ? "X" : "O";
+                        xOrO = player == 0 ? "X" : "O";
                     } else {
                         currentPlayer = player==1? "1":"A.I";
                         playerDisplayed= currentPlayer.equals("1")?"2":"1";
-                        xOrO = player == 1 ? "X" : "A.I";
+                        xOrO = player == 0 ? "X" : "A.I";
                     }
 
                     btn.setText(xOrO);
@@ -178,6 +175,7 @@ public class TicTacViewController implements Initializable
 
     private void setPlayer()
     {
+        //game.getNextPlayer();
         //lblPlayer.setText(TXT_PLAYER + ""+(gameType.equals("2 Players")?(currentPlayer=="1"?"2":"1"):currentPlayer=="1"?"1":"A.I"));
         lblPlayer.setText(TXT_PLAYER + ""+(gameType.equals("2 Players")?(playerDisplayed=="1"?"2":"1"):playerDisplayed=="1"?"1":"A.I"));
 
@@ -190,9 +188,11 @@ public class TicTacViewController implements Initializable
         {
             case -1:
                 message = "It's a draw :-(";
+
                 break;
             default:
                 message = (gameType.equals("2 Players")?(winner==1?"Player 2":"Player 1"):winner==2?"A.I":"Player 1") + " wins!!!";
+
                 break;
         }
         lblPlayer.setText(message);

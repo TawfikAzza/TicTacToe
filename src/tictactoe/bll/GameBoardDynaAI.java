@@ -2,6 +2,7 @@ package tictactoe.bll;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Pair;
 import tictactoe.gui.controller.TicTacViewDyn;
 
 import java.util.*;
@@ -16,7 +17,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
     private Boolean[][] handPlayed;
     List<Button> buttons = new ArrayList<>();
     private int length;
-    private int winner=0;
+    private int winner=-1;
     int colPlayed;
     int rowPlayed;
     String gameType = "AI";
@@ -147,6 +148,10 @@ public class GameBoardDynaAI implements IGameModelDyna{
             numFreePlacesRow=0;
 
         }
+        //TODO: The empty Position filling routine seems to fail when the number of position is low, I have to look that in detail.
+
+
+
         //TODO: The gathering of datas is done, I'll now try to make it useable...
         //TODO: What we are looking or are blocking points,
         // Meaning that we must seek the positions of weaknesses and cover them
@@ -190,7 +195,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         //TODO: I have to implement The Array List assciated with the attack and the one for the strategies if I can find a way to implement it...
         System.out.println("Blocking position List size = "+blockingPosition.size());
-        for (BlockingPosition buttonName : blockingPosition) {
+       /* for (BlockingPosition buttonName : blockingPosition) {
             System.out.println(" Button name : "+buttonName.getButton()
                     +" Row :"+buttonName.getRow()
                     +" Col : "+buttonName.getCol()
@@ -201,44 +206,98 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
                     +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
                     );
-        }
-
-
-
-
-
-
-
-
-
+        }*/
 
         System.out.println("--------Array col ----------");
         for (int i = 0; i < arrayFreePlacesCol.length; i++) {
             System.out.println("Col "+i+" has "+arrayFreePlacesCol[i]+"Free spaces");
         }
         System.out.println("--------Array Col end -------");
+      //  List<Pair<BlockingPosition, Integer>> priorityList = new Pair<BlockingPosition,Integer>();
+       /* if(priorityList.size()==0) {
+            priorityList.add(new Pair<>(blockingPosition.get(i),1));
+        }*/
+
+        for (int i = 0; i < blockingPosition.size(); i++) {
+            for (int k = 0; k < blockingPosition.size(); k++) {
+                if(blockingPosition.get(i).getButton().getId().equals(blockingPosition.get(k).getButton().getId())) {
+                    if(blockingPosition.get(i).getPriority()==0) {
+                       blockingPosition.get(i).setPriority(blockingPosition.get(i).getPriority()+1);
+                    } else {
+                        blockingPosition.get(i).setPriority(blockingPosition.get(i).getPriority()+1);
+                        blockingPosition.remove(blockingPosition.get(k));
+                    }
+                }
+            }
+        }
+        //TODO: I should have an array of priority based on the number of times a button appear on the list of
+        // Blocking positions....
+        // now to make the AI move according to the order of priority...
+        if(blockingPosition.size()!=0) {
+        System.out.println("Blocking position List size = "+blockingPosition.size());
+        for (BlockingPosition buttonName : blockingPosition) {
+            System.out.println(" Button name : "+buttonName.getButton()
+                    +" Row :"+buttonName.getRow()
+                    +" Col : "+buttonName.getCol()
+                    +" Priority :"+buttonName.getPriority()
+                    +" free place On ROW : "+buttonName.getFreePlacesOnRow()
+                    +" free place On  COL : "+buttonName.getFreePlacesOnCol()
+                    +" Human player In ROW : "+buttonName.getNumHumanPlayerInRow()
+                    +" Human player in COL : "+buttonName.getNumHumanPlayerInCol()
+                    +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
+                    +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
+            );
+        }
+
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getPriority));
+
+            System.out.println("After Try Sorting :");
+            for (BlockingPosition buttonName : blockingPosition) {
+                System.out.println(" Button name : " + buttonName.getButton()
+                        + " Row :" + buttonName.getRow()
+                        + " Col : " + buttonName.getCol()
+                        + " Priority :" + buttonName.getPriority()
+                        + " free place On ROW : " + buttonName.getFreePlacesOnRow()
+                        + " free place On  COL : " + buttonName.getFreePlacesOnCol()
+                        + " Human player In ROW : " + buttonName.getNumHumanPlayerInRow()
+                        + " Human player in COL : " + buttonName.getNumHumanPlayerInCol()
+                        + " AI player in ROW :" + buttonName.getNumAIPlayerInRow()
+                        + " AI player in COL :" + buttonName.getNumAIPlayerInCol()
+                );
+            }
+        }
+        int highestPriority =0;
 
         //TODO: Implement this for later use in the process, as soon as the nextPlayer problem is solved....
-
+        System.out.println("Before shuffle");
         Collections.shuffle(possiblePosition);
         Collections.shuffle(possibleLine);
         Collections.shuffle(possibleColumn);
 
         //TODO up to here, I need this for the next part of the AI algorythme...
         // Don't know if this will be used, for now it is just a try...
+
         Collections.shuffle(emptyPosition);
         possibleLine= new ArrayList(new HashSet(possibleLine));
         possibleColumn=new ArrayList(new HashSet(possibleColumn));
-        handPlayed[emptyPosition.get(0).getRow()][emptyPosition.get(0).getCol()]=player2;
-        ticTacViewDyn.setButtonText(emptyPosition.get(0).getButtonId(),"A.I");
+        System.out.println("Blocking size = "+blockingPosition.size());
+        System.out.println("Empty Position size = "+emptyPosition.size());
+        if(blockingPosition.size()!=0) {
+            handPlayed[blockingPosition.get(blockingPosition.size()-1).getRow()][blockingPosition.get(blockingPosition.size()-1).getCol()] = player2;
+            ticTacViewDyn.setButtonText(blockingPosition.get(blockingPosition.size()-1).getButton().getId(), "A.I");
+        } else if(emptyPosition.size()!=0){
+            Random rand = new Random();
+
+            handPlayed[blockingPosition.get(rand.nextInt(emptyPosition.size())).getRow()][emptyPosition.get(rand.nextInt(emptyPosition.size())).getCol()] = player2;
+            ticTacViewDyn.setButtonText(emptyPosition.get(rand.nextInt(emptyPosition.size())).getButtonId(), "A.I");
+       //     handPlayed[blockingPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getRow()][emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getCol()] = player2;
+       //     ticTacViewDyn.setButtonText(emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getButtonId(), "A.I");
+        }
         //ticTacViewDyn.setButtonText("L_" + blockingPosition.get(0).getRow() + "_C_"+blockingPosition.get(0).getCol(),"A.I");
         System.out.println("After setText");
         currentPlayer=true;
         System.out.println("Buttons size : "+buttons.size());
         //ticTacViewDyn.handleButtonAction(getButtonText(emptyPosition.get(0).getButtonId()));
-        Button testBtn = getButtonText(emptyPosition.get(0).getButtonId());
-
-        System.out.println(testBtn);
         String randomButton;
 
         boolean flagButton =false;
@@ -344,6 +403,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     return true;
                 }
             }
+            testVerticalPlayer2=0;
         }
         int testHorizontalPlayer1=0;
         int testHorizontalPlayer2=0;
@@ -372,6 +432,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     return true;
                 }
             }
+            testHorizontalPlayer2=0;
         }
         int testDiagPlayer1=0;
         int testDiagPlayer2=0;
@@ -402,7 +463,6 @@ public class GameBoardDynaAI implements IGameModelDyna{
                 if (booleans[k] != null) {
                     isGameOver = true;
                 } else {
-
                     return false;
                 }
             }
@@ -425,6 +485,6 @@ public class GameBoardDynaAI implements IGameModelDyna{
         handPlayed=new Boolean[ticTacViewDyn.getLength()][ticTacViewDyn.getLength()];
         currentPlayer=player;
        // buttons.clear();
-        winner=0;
+        winner=-1;
     }
 }

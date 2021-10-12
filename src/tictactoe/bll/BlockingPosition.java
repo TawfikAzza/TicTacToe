@@ -12,6 +12,15 @@ public class BlockingPosition {
     private int freePlacesOnCol;
     private int numHumanPlayerInRow;
 
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    private int priority=0;
     private int numHumanPlayerInCol;
     private int numAIPlayerInRow;
     private int numAIPlayerInCol;
