@@ -76,7 +76,7 @@ public class GameBoard implements IGameModel
             player=getNextPlayer();
             isGameOver();//done in order to update the array of position and for the check to be made on all the necessary fields
             //I must admit, I don't know why it doesn't work without it (I mean the test on the TicTacToe,
-            // and this is kind of a dirty to make it work, but that is the only solution I tested that actually
+            // and this is kind of a dirty way to make it work, but that is the only solution I tested that actually
             //work and provide the right results on the test made by Peter...
             return true;
         } else {
@@ -97,7 +97,7 @@ public class GameBoard implements IGameModel
                 testDiagInv=0;
             }
             if(testDiagInv==3){
-                System.out.println("Inv diagonal win");
+
                 winner=currentPlayer==1?0:1;
                 return true;
             }
@@ -112,14 +112,13 @@ public class GameBoard implements IGameModel
                 if(handPlayed[k][i] == currentPlayer){
 
                     testVertical++;
-                    //System.out.println("Adding 1 to vertical vertical = "+testVertical);
-                    //System.out.println("handPlayed["+k+"]["+i+"] = "+handPlayed[k][i]);
+
                 } else {
 
                     testVertical=0;
                 }
                 if(testVertical==3) {
-                    System.out.println("vertical win");
+
                     winner=currentPlayer==1?0:1;;
                     return true;
                 }
@@ -136,7 +135,7 @@ public class GameBoard implements IGameModel
                     testHorizontal=0;
                 }
                 if(testHorizontal==3) {
-                    System.out.println("Horizontal win");
+
                     winner=currentPlayer==1?0:1;;
                     return true;
                 }
@@ -150,7 +149,7 @@ public class GameBoard implements IGameModel
                 testDiag=0;
             }
             if(testDiag==3){
-                System.out.println("Diagonal win");
+
                 winner=currentPlayer==1?0:1;;
                 return true;
             }
@@ -178,13 +177,13 @@ public class GameBoard implements IGameModel
      */
     public int getWinner()
     {
-        System.out.println("Winner before : "+winner);
+
         if(winner!=-1) {
             if(winner==1) {
-                System.out.println("Winner : "+winner);
+
                 return 1;
             } else {
-                System.out.println("Winner : "+winner);
+
                 return 0;
             }
 
@@ -205,9 +204,6 @@ public class GameBoard implements IGameModel
         }
         winner=-1;
         player=1;
-        //getNextPlayer();
-
-        //TODO Implement this method
-    }
+     }
 
 }

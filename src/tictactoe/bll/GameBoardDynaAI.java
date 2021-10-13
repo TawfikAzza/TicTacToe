@@ -13,7 +13,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
     BorderPane borderPane;
     private Boolean player=true;
     private Boolean player2=false;
-    private Boolean currentPlayer=player;
+    private Boolean currentPlayer=true;
     private Boolean[][] handPlayed;
     List<Button> buttons = new ArrayList<>();
     private int length;
@@ -32,16 +32,22 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
     }
 
+    private void test(int height, int width){
+        int[][] myTable = new int[height][width];
+    }
+
     @Override
     public Boolean getNextPlayer() {
-        System.out.println("GetNext Called "+currentPlayer);
-        if(player) {
 
-            currentPlayer=player2;
-            return player2;
-        } if(!player) {
+        if(player) {
+            currentPlayer=player;
+            player=!player;
+            return player;
+        }
+        if(!player) {
 
             currentPlayer=player;
+            player=!player;
             return player;
         }
 
@@ -52,17 +58,32 @@ public class GameBoardDynaAI implements IGameModelDyna{
     public boolean play(int col, int row) {
         colPlayed=col;
         rowPlayed=row;
+
+        System.out.println("currentPlayer = "+currentPlayer);
         if(currentPlayer) {
+
             if(handPlayed[row][col]==null){
                 handPlayed[row][col]=player;
                 currentPlayer=false;
+                isGameOver();
                 return true;
             } else {
                 return false;
 
             }
         } else if(gameType.equals("AI")){
+            System.out.println("IN PLAY");
+            String array ="";
+
             aiPlay();
+
+            for (int i = 0; i < handPlayed.length; i++) {
+                for (int k = 0; k < handPlayed.length; k++) {
+                    array+="["+handPlayed[i][k]+"]";
+                }
+                array+="\n";
+            }
+            System.out.println(array);
             currentPlayer=true;
         } else {
             currentPlayer=true;
@@ -72,6 +93,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
     }
 
     public void aiPlay() {
+      //  System.out.println("IN AI PLAY");
         List<BlockingPosition> blockingPosition = new ArrayList<>();
         HashSet<Button> hashButton = new HashSet<>(buttons);
         List<String> possiblePosition= new ArrayList<>();
@@ -88,7 +110,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
         // remember in order to not lose too easily...
         // for that I created a BlockingPosition class which will be in charge of storing every button I can find which are in the way of the opponent
         // way of victory.
-        // I'll store every buttons comtained in every  Line, Row and Diagonal which are occupied only by the opponent, I'll also store the empty position possible in order to get the
+        // I'll store every buttons contained in every  Line, Row and Diagonal which are occupied only by the opponent, I'll also store the empty position possible in order to get the
         // AI a measure of liberty via randomness in order for it to try maybe new moves through a simulation array that I intend to create.
         // I need for that a whole lot of differents int variables in order to stock the number of free spaces the gameBoard has, as well as the number of button/position occupied
         // and other int type arrays to store the number of occurence of a player in colonnes, I unfortunatly don't know how to do it
@@ -127,7 +149,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     AIPlayerInCol[k]++;
                     AIPlayerInRow++;
                     if(numPlayerInRow==1){
-                        numPlayerInRow++;
+                        numPlayerInRow++;//this one is to count if the AI already played in the same row as the human player.
                     }
                 }
                 arrayNumFreePlacesInRow[i]=numFreePlacesRow;
@@ -149,18 +171,18 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         }
         //TODO: The empty Position filling routine seems to fail when the number of position is low, I have to look that in detail.
-
+   //     System.out.println("Gathering of datas done.");
 
 
         //TODO: The gathering of datas is done, I'll now try to make it useable...
-        //TODO: What we are looking or are blocking points,
+        //TODO: What we are looking for are blocking points,
         // Meaning that we must seek the positions of weaknesses and cover them
         // I start by making a check of every position which contains a row or col
         // which have a human player in it and no AI present. I store how many free spaces there are on it, and will decide how to treat
         // the situation based on the number of free spaces left on the row/col.
 
         for (int i = 0; i < handPlayed.length; i++) {
-            System.out.println("Number of free places in row :"+arrayNumFreePlacesInRow[i]);
+           // System.out.println("Number of free places in row :"+arrayNumFreePlacesInRow[i]);
             for (int k = 0; k < handPlayed.length; k++) {
                 if(arrayNumFreePlacesInRow[i]!=0) {
                     if(arrayHumanPlayerInRow[i]!=0 && humanPlayerInCol[k] !=0){
@@ -189,13 +211,14 @@ public class GameBoardDynaAI implements IGameModelDyna{
                 }
             }
         }
+      //  System.out.println("First sorting of dats done ");
         // Note: That must be what brainfuck means, I aged 10 years sorting my heads out about what to do or try....
         // TODO: I should have in my list only the positions as well as the associated positions which contains only humans player and no AI in it, I also stored the number
         //  of free places contained in its row and columns...should be enough to defend the poor AI...
 
         //TODO: I have to implement The Array List assciated with the attack and the one for the strategies if I can find a way to implement it...
-        System.out.println("Blocking position List size = "+blockingPosition.size());
-       /* for (BlockingPosition buttonName : blockingPosition) {
+     //   System.out.println("Blocking position List size = "+blockingPosition.size());
+        /*for (BlockingPosition buttonName : blockingPosition) {
             System.out.println(" Button name : "+buttonName.getButton()
                     +" Row :"+buttonName.getRow()
                     +" Col : "+buttonName.getCol()
@@ -206,18 +229,18 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
                     +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
                     );
-        }*/
-
-        System.out.println("--------Array col ----------");
+        }
+*/
+     /*   System.out.println("--------Array col ----------");
         for (int i = 0; i < arrayFreePlacesCol.length; i++) {
             System.out.println("Col "+i+" has "+arrayFreePlacesCol[i]+"Free spaces");
         }
-        System.out.println("--------Array Col end -------");
+        System.out.println("--------Array Col end -------");*/
       //  List<Pair<BlockingPosition, Integer>> priorityList = new Pair<BlockingPosition,Integer>();
-       /* if(priorityList.size()==0) {
-            priorityList.add(new Pair<>(blockingPosition.get(i),1));
-        }*/
-
+       // if(priorityList.size()==0) {
+        //    priorityList.add(new Pair<>(blockingPosition.get(i),1));
+        //}
+       // System.out.println("Removing double and factoring them for the priority setup");
         for (int i = 0; i < blockingPosition.size(); i++) {
             for (int k = 0; k < blockingPosition.size(); k++) {
                 if(blockingPosition.get(i).getButton().getId().equals(blockingPosition.get(k).getButton().getId())) {
@@ -233,7 +256,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
         //TODO: I should have an array of priority based on the number of times a button appear on the list of
         // Blocking positions....
         // now to make the AI move according to the order of priority...
-        if(blockingPosition.size()!=0) {
+       /* if(blockingPosition.size()!=0) {
         System.out.println("Blocking position List size = "+blockingPosition.size());
         for (BlockingPosition buttonName : blockingPosition) {
             System.out.println(" Button name : "+buttonName.getButton()
@@ -265,11 +288,12 @@ public class GameBoardDynaAI implements IGameModelDyna{
                         + " AI player in COL :" + buttonName.getNumAIPlayerInCol()
                 );
             }
-        }
+        }*/
+       // System.out.println("Sorting according to priority done :");
         int highestPriority =0;
 
         //TODO: Implement this for later use in the process, as soon as the nextPlayer problem is solved....
-        System.out.println("Before shuffle");
+       // System.out.println("Before shuffle");
         Collections.shuffle(possiblePosition);
         Collections.shuffle(possibleLine);
         Collections.shuffle(possibleColumn);
@@ -280,8 +304,8 @@ public class GameBoardDynaAI implements IGameModelDyna{
         Collections.shuffle(emptyPosition);
         possibleLine= new ArrayList(new HashSet(possibleLine));
         possibleColumn=new ArrayList(new HashSet(possibleColumn));
-        System.out.println("Blocking size = "+blockingPosition.size());
-        System.out.println("Empty Position size = "+emptyPosition.size());
+        //System.out.println("Blocking size = "+blockingPosition.size());
+        //System.out.println("Empty Position size = "+emptyPosition.size());
         if(blockingPosition.size()!=0) {
             handPlayed[blockingPosition.get(blockingPosition.size()-1).getRow()][blockingPosition.get(blockingPosition.size()-1).getCol()] = player2;
             ticTacViewDyn.setButtonText(blockingPosition.get(blockingPosition.size()-1).getButton().getId(), "A.I");
@@ -290,13 +314,15 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
             handPlayed[blockingPosition.get(rand.nextInt(emptyPosition.size())).getRow()][emptyPosition.get(rand.nextInt(emptyPosition.size())).getCol()] = player2;
             ticTacViewDyn.setButtonText(emptyPosition.get(rand.nextInt(emptyPosition.size())).getButtonId(), "A.I");
+
        //     handPlayed[blockingPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getRow()][emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getCol()] = player2;
        //     ticTacViewDyn.setButtonText(emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getButtonId(), "A.I");
         }
+       // isGameOver();
         //ticTacViewDyn.setButtonText("L_" + blockingPosition.get(0).getRow() + "_C_"+blockingPosition.get(0).getCol(),"A.I");
-        System.out.println("After setText");
+        //System.out.println("After setText");
         currentPlayer=true;
-        System.out.println("Buttons size : "+buttons.size());
+        //System.out.println("Buttons size : "+buttons.size());
         //ticTacViewDyn.handleButtonAction(getButtonText(emptyPosition.get(0).getButtonId()));
         String randomButton;
 
@@ -311,23 +337,182 @@ public class GameBoardDynaAI implements IGameModelDyna{
         // why?
         // maybe revert from Boolean to integer in the array ?
 
-        String array ="";
+       /* String array ="";
         for (int i = 0; i < handPlayed.length; i++) {
             for (int k = 0; k < handPlayed.length; k++) {
                 array+="["+handPlayed[i][k]+"]";
             }
             array+="\n";
         }
-        System.out.println(array);
+        System.out.println(array);*/
 
 
        // getNextPlayer();
+
+       /* Boolean[][] designDiagonal= new Boolean[4][4];
+        designDiagonal[0][0]=true;
+        designDiagonal[1][1]=true;
+        designDiagonal[2][2]=true;
+        designDiagonal[3][3]=true;
+        designPatterns.add(new DesignPattern("Diagonal",4,4,designDiagonal));
+        Boolean[][] designInvDiagonal = new Boolean[4][4];
+        designInvDiagonal[3][0]=true;
+        designInvDiagonal[2][1]=true;
+        designInvDiagonal[1][2]=true;
+        designInvDiagonal[0][3]=true;
+        designPatterns.add(new DesignPattern("InvDiagonal",4,4,designInvDiagonal));*/
+
+        // Todo: Why commenting everything you ask?
+        // because I'm going to try the design pattern approach...
+
+        //The patterns are designed by using the relatives coordinates of the point currently parsed.
+        //in order to store the coordinate, I use two arrays: one for the row (or X coordinate)
+        //one for the col (or Y coordinate).
+        //I also store the values of the width and height of the pattern in order to calculate the necessary Offset
+        // for the i and k index used in the for loops this way, it will never (hopefully) go out of bound
+        //This way,  the form which contains the pattern can be a square or a rectangle, the only thing which will change is the boundaries of the
+        //Row and Col index used to parse though the handPlayed.
+        //I then store the values of the two coordinates arrays in two List contained in the DesignPattern class through its constructor.
+        //The constructor will fill two distinct lists, one for the X coordinate (or Offset as the coordianates can only
+        // really be considered coordinate if the origin is the currently parsed position in the array) and one for the Y.
+        // And as the coordinates always comes in pair,the two lists will allways have the same length,
+        // thus, the same corresponding values of X and Y at the same index.
+        //All I will have to do to compare the coordinates is parsing through the list and see if the entered relative coordinates
+        //matches with the values of the current player, if it does, I know that the configuration of the positions of the currentPlayer
+        //are the one entered in the designPattern.
+        //Well................
+        //that's how it should be in theory....
+
+        //Here goes:
+        //This is the list which will contain the Patterns described in the class DesignPattern before (this setup allows me to store as many
+        // patterns as I want or needs) :
+        List<DesignPattern> designPatterns = new ArrayList<>();
+        //NOTE:
+        //TODO: The problem I see is the fact that I will have to parse through all the patterns each time, there must be a more efficient way to do so, but my
+        // intelligence is limited, I will have to ask Jeppe about it....
+
+        //TODO: NOTE THAT X IS ACTUALLY THE COLUMN OFFSET AND Y THE ROW OFFSET IN THIS PATTERN! ! ! !
+        // I now understand why Peter inversed the row and col in his play(c,r) method signature, he was actually helping us....bless him, he is a good guy.
+        // I had to go through this hell in order to understand the why, I still have a long way to go.
+
+        //Here, I describe the relative coordinates for the diagonal, I know that it starts from the point currently parsed and increment
+        //by 1 with each X steps, we have a (X,Y) (X+1,Y+1) (X+2,Y+2) (X+3,Y+3) pattern of points, and it translates as the following
+        //for the design pattern of the diagonal:
+
+        int[] rowDiagPos = {0,1,2,3};
+        int[] colDiagPos = {0,1,2,3};
+        designPatterns.add(new DesignPattern("Diagonal",rowDiagPos,colDiagPos,4,4));
+
+        //For the inverse diagonal, we have a
+        // (X+3,Y) (X+2,Y+1) (X+1,Y+2) (X,Y+3) pattern to match the relatives coordinate for the inverse diagonal
+        //It translate as the following in the design pattern of the inverse diagonal:
+
+        int[] rowInvDiagPos = {0,1,2,3};
+        int[] colInvDiagPos = {3,2,1,0};
+        designPatterns.add(new DesignPattern("InvDiagonal",rowInvDiagPos,colInvDiagPos,4,4));
+
+        //For the line, it was actually really simple, we have a pattern like the following.
+        //(X,Y) (X+1,Y) (X+2,Y) (X+3,Y)
+        int[] rowLinePos = {0,0,0,0};
+        int[] colLinePos = {0,1,2,3};
+        designPatterns.add(new DesignPattern("Line",rowLinePos,colLinePos,4,1));
+
+        //For the column, we have a pattern like the following:
+        //(X,Y) (X,Y+1) (X,Y+2) (X,Y+3)
+        int[] rowVerticalPos = {0,1,2,3};
+        int[] colVerticalPos = {0,0,0,0};
+        designPatterns.add(new DesignPattern("Column", rowVerticalPos,colVerticalPos,1,4));
+
+       // System.out.println("before patterns");
+        for (DesignPattern dp: designPatterns) {
+           // System.out.println(dp.getName());
+           // System.out.println("GETHEIGHT for "+dp.getName()+" = "+(handPlayed.length-dp.getHeight()));
+
+            for (int i = 0; i < handPlayed.length-dp.getHeight()+1; i++) {
+                //here I parse through the array representing the BoardGame with an offset on the rows minus the height of the
+                //pattern currently sought, and I add a +1 to the boundary as the difference between the two is an absolute one.
+                // So I have to add 1 to the index in order
+                // to parse the entirety of the array as the stop point is the STRICKLY inferior value of k to the absolute
+                //difference of the handPlayed length and the design pattern's Height.
+                //TODO: confusing, come back here later in order to explain it better...
+
+                //I have already set the different values of the indexes as well as their respective height and width in the DesignPattern class
+                // I only have to add these value to the coordinate of the index currently parsed by the for loops.
+                //the advantage I see in list is the fact that it can (in theory) store any type of pattern if I provide the right
+                //offsets of coordinates X and Y in the arrays taken as argument by the constructor, this way I am not limited by the number of
+                //relatives coordinates the pattern has and can have as many point designing the patterns as I want.
+                // I only need to loop with a for type loop through the list of coordinates and verify if these coordinates
+                //added on the current index of the array representing the GameBoard parsed are a match with the currentPlayer value.
+                // Like this : gameBoardArray[i+X][k+Y]==currentPlayer, and this must be true for ALL the points listed in the
+                // Pattern to be considered as a match of a pattern and thus the pattern being found.
+
+                //the real issue was certainly the indexes boundaries setting up for it parse through the gameBoardArray (here it is name handPlayed)
+                // in order to "brush" through the entirety of the array ...
+                //Lots and Lots of trials an errors there...thanks God I thought of the width and Height of the pattern
+                // in the design of the DesignPattern class.....still, I am sick of the "out of bounds" messages...
+
+                //TODO: Here the relative height is already the size for the scope of i to parse without any risks of out of bounds (in theory).
+                // also, aside from that, it seems to work....
+                // It did work out Yay! , but what do I do with it though?
+
+
+                for (int k = 0; k < handPlayed.length-dp.getWidth()+1; k++) {
+                    //LOTS OF RUBBISH COMMENTS AHEAD, but I can't bear to part with it, it was a determining factor in my succeddingly
+                    //finding the right borders of the parsing......I'll delete it later....
+
+                  // for (int d = 0; d < (handPlayed.length-dp.getWidth()); d++) {
+                        //faire la comparaison de toutes les positions de la liste.
+                  //  if(dp.getName().equals("Column")) {
+                       /* System.out.println("Pattern name : " + dp.getName() + " row : " + i +" Column : "+k);
+                        System.out.println("handPlayed[" + (i + dp.rowPositions.get(0)) + "][" + (k + dp.colPositions.get(0)) + "] = "
+                                + handPlayed[i + dp.rowPositions.get(0)][k + dp.colPositions.get(0)]
+                                + " handPlayed[" + (i + dp.rowPositions.get(1)) + "][" + (k + dp.colPositions.get(1)) + "]= "
+                                + handPlayed[i + dp.rowPositions.get(1)][k + dp.colPositions.get(1)] + " "
+                                + " handPlayed[" + (i + dp.rowPositions.get(2)) + "][" + (k + dp.colPositions.get(2)) + "]= "
+                                + handPlayed[i + dp.rowPositions.get(2)][k + dp.colPositions.get(2)] + " "
+                                + " handPlayed[" + (i + dp.rowPositions.get(3)) + "][" + (k + dp.colPositions.get(3)) + "]= "
+                                + handPlayed[i + dp.rowPositions.get(3)][k + dp.colPositions.get(3)]);*/
+                  //  }
+                        /*System.out.println(handPlayed[i+dp.rowPositions.get(0)][k+dp.colPositions.get(0)] ==
+                                 handPlayed[i+dp.rowPositions.get(1)][k+dp.colPositions.get(1)] ==
+                                 handPlayed[i+dp.rowPositions.get(2)][k+dp.colPositions.get(2)] ==
+                                 handPlayed[i+dp.rowPositions.get(3)][k+dp.colPositions.get(3)] );
+*/                  int matchPattern=0;
+                    for (int j = 0; j < dp.rowPositions.size(); j++) {
+                        //in order for the pattern to be found successfully,
+                        //the matching must be done in the entirety of the points described in its list of relatives coordinates.
+                        // So the size of the index of the list must be equal to the index matchPattern which increase by one at
+                        // each match of the coordinates of the pattern with the
+                        //current point parsed by the routine as origin.
+                        //TODO: I'll try exotic ones tomorrow, now I am too tired.
+
+                        if(handPlayed[i+dp.rowPositions.get(j)][k+dp.colPositions.get(j)] == currentPlayer) {
+                            matchPattern++;
+                        } else {
+                            matchPattern=0;
+                        }
+                    }
+                    if(matchPattern==dp.rowPositions.size()) {//I can do that because the row and col list have strictly the same size.
+                        System.out.println("PATTERN FOUND! ! ! the pattern found is "+dp.getName());
+                    }
+                        /*if(handPlayed[i+dp.rowPositions.get(0)][k+dp.colPositions.get(0)] == currentPlayer
+                            && handPlayed[i+dp.rowPositions.get(1)][k+dp.colPositions.get(1)] == currentPlayer
+                            && handPlayed[i+dp.rowPositions.get(2)][k+dp.colPositions.get(2)] == currentPlayer
+                            && handPlayed[i+dp.rowPositions.get(3)][k+dp.colPositions.get(3)] == currentPlayer){
+                            System.out.println("Marché avec : "+dp.getName());
+                        }*/
+                   // }*/
+                }
+            }
+        }
+
     }
 
     @Override
     public void readGame(int col, int row) {
         handPlayed[row][col]=player;
-    }
+    }//necessary method to force the update of the AI play, if not done, the AI turn and corresponding values of its play
+    //on the game board will not appear until the next turn...
 
     @Override
     public Boolean getPlayer() {

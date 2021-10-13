@@ -43,6 +43,8 @@ public interface IGameModelDyna {
     public void newGame();
 
     public void aiPlay();
+    //Note on readGame() : necessary method to force the update of the AI play, if not done, the AI turn and corresponding values of its play
+    //on the game board will not appear until the next turn...
     public void readGame(int col, int row);
     public Boolean getPlayer();
     public Button getButtonText(String btnId);

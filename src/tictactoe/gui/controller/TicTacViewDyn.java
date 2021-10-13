@@ -12,6 +12,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import tictactoe.bll.GameBoardDyna;
 import tictactoe.bll.GameBoardDynaAI;
 import tictactoe.bll.IGameModel;
@@ -29,7 +32,8 @@ public class TicTacViewDyn implements Initializable {
     private IGameModelDyna game;
     public VBox vBoxCenter;
     public BorderPane borderPane;
-    int length=10;
+    int length=6;
+    int OffsetButton= 1;
     private static final String TXT_PLAYER = "Player: ";
     private static int gameStarted=0;
     private Boolean[][] handPlayed;
@@ -65,7 +69,7 @@ public class TicTacViewDyn implements Initializable {
 
             if (!game.isGameOver()) {
                 player = game.getPlayer();
-                System.out.println("In TicTac Toe Player : "+player);
+               // System.out.println("In TicTac Toe Player : "+player);
 
             }
             //numberOfTurns++;
@@ -80,7 +84,7 @@ public class TicTacViewDyn implements Initializable {
                     game.play(c,r);
                 }
                 if (game.isGameOver()) {
-
+                   // System.out.println("You are here");
                     if(Offset==0) {
                         String xOrO;
 
@@ -92,7 +96,7 @@ public class TicTacViewDyn implements Initializable {
                             currentPlayer = player? "1":"A.I";
                             xOrO = player  ? "X" : "A.I";
                         }
-
+                        btn.setTextFill(Color.valueOf("blue"));
                         btn.setText(xOrO);
 
                         Offset++;
@@ -117,7 +121,7 @@ public class TicTacViewDyn implements Initializable {
                         playerDisplayed= currentPlayer.equals("1")?"2":"1";
                         xOrO = player ? "X" : "A.I";
                     }
-
+                    btn.setTextFill(Color.valueOf("blue"));
                     btn.setText(xOrO);
                     if(gameType.equals("2 Players")) {
                         if(playerDisplayed.equals("1")){
@@ -171,6 +175,8 @@ public class TicTacViewDyn implements Initializable {
     private void createBoard(int length) {
         vBoxCenter.setAlignment(Pos.CENTER);
         vBoxCenter.prefHeight(800);
+        vBoxCenter.setPrefHeight(800);
+        vBoxCenter.setPrefWidth(800);
         vBoxCenter.setSpacing(5);
 
         //vBoxCenter.set
@@ -178,13 +184,23 @@ public class TicTacViewDyn implements Initializable {
             HBox hb=new HBox();
             hb.setId("L_"+i+"_");
             hb.setSpacing(5);
+            hb.setPrefWidth(vBoxCenter.getPrefWidth());
             //hb.set
             hb.setAlignment(Pos.CENTER);
             for (int k = 0; k < length; k++) {
                 Button btn = new Button();
-                btn.setMinWidth(30);
-                btn.setMinHeight(30);
+
+                btn.setPrefWidth(hb.getPrefWidth()/length);
+                btn.setPrefHeight(hb.getPrefWidth()/length);
+                btn.setGraphicTextGap(0);
+                btn.setLineSpacing(0);
+                //btn.setMinWidth(30);
+                //btn.setMinHeight(30);
                 btn.setUserData("");
+                System.out.println("Button size = "+btn.getPrefWidth());
+                System.out.println((btn.getPrefWidth()/length)-10);
+                Font f = Font.font("Verdana", FontWeight.BOLD, (btn.getPrefWidth()/(length+OffsetButton)));
+                btn.setFont(f);
                 btn.setOnAction(e->handleButtonAction(btn));
                 btn.setId(hb.getId()+"C_"+k);
                 btn.setUserData(btn.getId());
@@ -211,6 +227,7 @@ public class TicTacViewDyn implements Initializable {
     public boolean setButtonText(String btnId, String text) {
         for (Button b: buttons) {
             if(b.getId().equals(btnId)){
+                b.setTextFill(Color.valueOf("red"));
                 b.setText(text);
                 return true;
             }
