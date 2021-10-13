@@ -49,7 +49,7 @@ public class TicTacViewController implements Initializable
     private String playerDisplayed="1";
     private int Offset=0;
     public ObservableList<Node> testBut;
-
+    private int length = 6;
     public ActionEvent actionTest;
     private int numberOfTurns=0;
     String gameType;
@@ -166,7 +166,32 @@ public class TicTacViewController implements Initializable
         } else {
             game = new GameBoardAI(this);
         }
-
+        int row = 0;
+        int col = 4;
+        int resultRow=0;
+        int resultCol =0;
+        resultRow = ((length-1)*col+(length-1))%(length);
+        resultCol =  row; // ((length-1)*x+(length-1))%(length);
+        int resultRowOpposite = ((length-1)*row+(length-1))%(length);
+        int resultColOpposite = ((length-1)*col+(length-1))%(length);; // ((length-1)*x+(length-1))%(length);
+        int resultRowAntiClockWise = col;
+        int resultColAntiClockWise = ((row*(length-1))+(length-1))%(length);
+        int rowInvDiag = ((col*(length-1))+(length-1))%length;
+        int colInvDiag= ((row*(length-1))+(length-1))%length;
+        int rowDiag = col;
+        int colDiag = row;//Todo: this one must be tested, but should be correct.
+        int verticalSymRow=((row*(length-1))+(length-1))%length;
+        int verticalSymCol=col;
+        int horizontalSymRow=row;
+        int horizontalSymCol=((col*(length-1))+(length-1))%length;
+        //Todo: God helped me during this ordeal, there is no doubt in my mind about it.
+        //It works, I just need to figure out the best way to use it.
+        System.out.println("Entry : ("+row+","+col+") "+" Result clockWise : ("+resultRow+","+resultCol+")");
+        System.out.println("Entry : ("+row+","+col+") "+" Result Opposite : ("+resultRowOpposite+","+resultColOpposite+")");
+        System.out.println("Entry : ("+row+","+col+") "+" Result antiClockWise : ("+resultRowAntiClockWise+","+resultColAntiClockWise+")");
+        System.out.println("Entry : ("+row+","+col+") "+" Result invDiag : ("+rowInvDiag+","+colInvDiag+")");
+        System.out.println("Entry : ("+row+","+col+") "+" Result Vertical Sym : ("+verticalSymRow+","+verticalSymCol+")");
+        System.out.println("Entry : ("+row+","+col+") "+" Result Vertical Sym : ("+horizontalSymRow+","+horizontalSymCol+")");
         playerDisplayed = currentPlayer.equals("1")?"2":"1";
         game.isGameOver();
 

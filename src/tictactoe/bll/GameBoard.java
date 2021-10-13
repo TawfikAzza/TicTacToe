@@ -24,7 +24,7 @@ public class GameBoard implements IGameModel
     private GridPane gridPane;
     TicTacViewController ticTacToeController;
 
-    public int player=1;
+    private int player=1;
     int currentPlayer=1;
     int[][] handPlayed = { {-1,-1,-1} , {-1,-1,-1} , {-1,-1,-1}};
     int colPlayed;

@@ -26,7 +26,13 @@
             <Button id="1" fx:id="btn1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="31.0" prefWidth="424.0">
                <font>
                   <Font name="System Bold" size="50.0" />
-               </font></Button>
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></Button>
             <Button id="2" fx:id="btn2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleButtonAction" GridPane.columnIndex="1">
                <font>
                   <Font name="System Bold" size="50.0" />

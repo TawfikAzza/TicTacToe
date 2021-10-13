@@ -335,32 +335,11 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         //TODO: solve this enigma : the array handPlayed doesn't update just after the value has been inputed, but the turn after....
         // why?
-        // maybe revert from Boolean to integer in the array ?
-
-       /* String array ="";
-        for (int i = 0; i < handPlayed.length; i++) {
-            for (int k = 0; k < handPlayed.length; k++) {
-                array+="["+handPlayed[i][k]+"]";
-            }
-            array+="\n";
-        }
-        System.out.println(array);*/
 
 
-       // getNextPlayer();
 
-       /* Boolean[][] designDiagonal= new Boolean[4][4];
-        designDiagonal[0][0]=true;
-        designDiagonal[1][1]=true;
-        designDiagonal[2][2]=true;
-        designDiagonal[3][3]=true;
-        designPatterns.add(new DesignPattern("Diagonal",4,4,designDiagonal));
-        Boolean[][] designInvDiagonal = new Boolean[4][4];
-        designInvDiagonal[3][0]=true;
-        designInvDiagonal[2][1]=true;
-        designInvDiagonal[1][2]=true;
-        designInvDiagonal[0][3]=true;
-        designPatterns.add(new DesignPattern("InvDiagonal",4,4,designInvDiagonal));*/
+
+
 
         // Todo: Why commenting everything you ask?
         // because I'm going to try the design pattern approach...
@@ -401,7 +380,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         int[] rowDiagPos = {0,1,2,3};
         int[] colDiagPos = {0,1,2,3};
-        designPatterns.add(new DesignPattern("Diagonal",rowDiagPos,colDiagPos,4,4));
+        designPatterns.add(new DesignPattern("Diagonal",rowDiagPos,colDiagPos,4,4, length));
 
         //For the inverse diagonal, we have a
         // (X+3,Y) (X+2,Y+1) (X+1,Y+2) (X,Y+3) pattern to match the relatives coordinate for the inverse diagonal
@@ -409,19 +388,19 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         int[] rowInvDiagPos = {0,1,2,3};
         int[] colInvDiagPos = {3,2,1,0};
-        designPatterns.add(new DesignPattern("InvDiagonal",rowInvDiagPos,colInvDiagPos,4,4));
+        designPatterns.add(new DesignPattern("InvDiagonal",rowInvDiagPos,colInvDiagPos,4,4,length));
 
         //For the line, it was actually really simple, we have a pattern like the following.
         //(X,Y) (X+1,Y) (X+2,Y) (X+3,Y)
         int[] rowLinePos = {0,0,0,0};
         int[] colLinePos = {0,1,2,3};
-        designPatterns.add(new DesignPattern("Line",rowLinePos,colLinePos,4,1));
+        designPatterns.add(new DesignPattern("Line",rowLinePos,colLinePos,4,1,length));
 
         //For the column, we have a pattern like the following:
         //(X,Y) (X,Y+1) (X,Y+2) (X,Y+3)
         int[] rowVerticalPos = {0,1,2,3};
         int[] colVerticalPos = {0,0,0,0};
-        designPatterns.add(new DesignPattern("Column", rowVerticalPos,colVerticalPos,1,4));
+        designPatterns.add(new DesignPattern("Column", rowVerticalPos,colVerticalPos,1,4,length));
 
        // System.out.println("before patterns");
         for (DesignPattern dp: designPatterns) {
@@ -457,7 +436,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
 
                 for (int k = 0; k < handPlayed.length-dp.getWidth()+1; k++) {
-                    //LOTS OF RUBBISH COMMENTS AHEAD, but I can't bear to part with it, it was a determining factor in my succeddingly
+                    //LOTS OF RUBBISH COMMENTS AHEAD, but I can't bear to part with it, it was a determining factor in my succeeding
                     //finding the right borders of the parsing......I'll delete it later....
 
                   // for (int d = 0; d < (handPlayed.length-dp.getWidth()); d++) {
