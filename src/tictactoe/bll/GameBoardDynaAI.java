@@ -295,7 +295,13 @@ public class GameBoardDynaAI implements IGameModelDyna{
         // I had to create 3 different constructors in the BlickingPosition class alone in order to accomodate the different set of datas I ended up with needing
         // of treatment, I couldn't store everything in the same list as the datas showed would have been contradictory at some points.
         // Especially in the trimming of the list number of entries, as several instances of the same button would show for differents reasons, if for example the row and col
-        // are matching and need to be filled the priority would be two, or three, however the same button
+        // are matching and need to be filled the priority would be two, or three, however the same button may be used as a defensive point in the diagonal or inverse diagonal
+        // defensive strategy, and the risk of it being getting rid of is real.
+        // if I don't do the trimming, the number of instances of the same button will be in the dozen, and it will severly impede the priority process set up for the
+        // row and col defense...
+        // So I had to create two other lists one for the DIagonal and one for the Inverse diagonal...
+        // now that it is implemented, the next stage is the reduction of the winning rule to a line of 4 instead of the length of the array which can
+        // increase to up to 10 or more if I can find how to keep it clean (I should work on the graphic interface a little more... too much to do....)
         for (int i = 0; i < handPlayed.length; i++) {
             if(handPlayed[i][i]==null) {
                 if(numFreePlacesInDiag!=0){
@@ -375,7 +381,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     );
         }
 */
-        for (BlockingPosition buttonName : blockingDiagPosition) {
+      /*  for (BlockingPosition buttonName : blockingDiagPosition) {
             System.out.println(" Button name : "+buttonName.getButton()
                     +" Row :"+buttonName.getRow()
                     +" Col : "+buttonName.getCol()
@@ -404,7 +410,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
                     +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
             );
-        }
+        }*/
      /*   System.out.println("--------Array col ----------");
         for (int i = 0; i < arrayFreePlacesCol.length; i++) {
             System.out.println("Col "+i+" has "+arrayFreePlacesCol[i]+"Free spaces");
