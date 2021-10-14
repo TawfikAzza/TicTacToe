@@ -37,7 +37,7 @@ public class DesignPattern {
         }
 
         for (int i = 0; i < rowPos.length; i++) {
-            rowPositions.add(rowPos[i]);
+            //rowPositions.add(rowPos[i]);
         }
         for (int i = 0; i < colPos.length; i++) {
             int resultRow=0;

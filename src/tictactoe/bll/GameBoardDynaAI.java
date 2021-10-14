@@ -95,6 +95,9 @@ public class GameBoardDynaAI implements IGameModelDyna{
     public void aiPlay() {
       //  System.out.println("IN AI PLAY");
         List<BlockingPosition> blockingPosition = new ArrayList<>();
+        List<BlockingPosition> blockingDiagPosition = new ArrayList<>();
+        List<BlockingPosition> blockingInvDiagPosition = new ArrayList<>();
+
         HashSet<Button> hashButton = new HashSet<>(buttons);
         List<String> possiblePosition= new ArrayList<>();
         List<EmptyPosition> emptyPosition=new ArrayList<>();
@@ -121,31 +124,128 @@ public class GameBoardDynaAI implements IGameModelDyna{
         int AIPlayerInRow=0;
         int numPlayerInRow=0;
         int numFreePlacesRow=0;
+        int humanPlayerInDiag=0;
+        int AIPlayerInDiag=0;
+        int numPlayerInDiag=0;
+        int numAIInDiag=0;
+        int numPlayerInInvDiag=0;
+        int numAIInInvDiag=0;
+        int numFreePlacesInDiag=0;
+        int humanPlayerInInvDiag=0;
+        int AIPlayerInInvDiag=0;
 
-        int[] arrayHumanPlayerInRow=new int[handPlayed.length];
+        int numFreePlacesInInvDiag=0;
+        int[] arrayHumanPlayerInRow = new int[handPlayed.length];
+        int[] uninterruptedPlayerInRow = new int[handPlayed.length];
+        int[] uninterruptedPlayerInCol = new int[handPlayed.length];
+        int[] uninterruptedAIInRow = new int[handPlayed.length];
+        int[] uninterruptedAIInCol = new int[handPlayed.length];
+        int[][] uninterruptedPlayerinDiag= new int[handPlayed.length][handPlayed.length];
+        int[][] uninterruptedPlayerinInvDiag=new int[handPlayed.length][handPlayed.length];
+        int[][] uninterruptedAIinDiag = new int[handPlayed.length][handPlayed.length];
+        int[][] uninterruptedAIinInvDiag=new int[handPlayed.length][handPlayed.length];
         int[] arrayAIPlayerInRow = new int[handPlayed.length];
         int[] numPlayerPerRow = new int[handPlayed.length];
         int[] arrayNumFreePlacesInRow = new int[handPlayed.length];
+
         int[] arrayNumFreePlacesInCOl = new int[handPlayed.length];
         int[] humanPlayerInCol = new int[handPlayed.length];
         int[] AIPlayerInCol = new int[handPlayed.length];
         int[] arrayFreePlacesCol = new int[handPlayed.length];
+        int longestAIRow=0;
+        int longestAICol=0;
+        int longestAIDiag=0;
+        int longestAIInvDiag=0;
+        int longestHumanRow=0;
+        int longestHumanCol=0;
+        int longestHumanDiag=0;
+        int longestHumanInvDiag=0;
+
         for (int i = 0; i < handPlayed.length; i++) {
             for (int k = 0; k < handPlayed.length; k++) {
+                if(handPlayed[i][k]==null && i==k) {
+                    numFreePlacesInDiag+=1;
+                }
+                if(handPlayed[i][i]==player && i==k) {
+
+                    humanPlayerInDiag++;
+                    numPlayerInDiag++;
+                }
+                if(handPlayed[i][i]==player2 && i==k) {
+                    AIPlayerInDiag+=1;
+                    numAIInDiag++;
+                }
+
+                if(handPlayed[(length-1)-i][i]==null && (length-1)-i==k) {
+                    numFreePlacesInInvDiag+=1;
+                }
+                if(handPlayed[(length-1)-i][i]==player && (length-1)-i==k) {
+                    humanPlayerInInvDiag++;
+                    numPlayerInInvDiag++;
+                }
+                if(handPlayed[(length-1)-i][i]==player2 && (length-1)-i==k) {
+                    AIPlayerInInvDiag+=1;
+                    numAIInInvDiag++;
+                }
+
                 if(handPlayed[i][k]==null){
+                    if((length-1)-i==k){
+                        if(humanPlayerInInvDiag>longestHumanInvDiag) {
+                            uninterruptedPlayerinInvDiag[(length-1)-i][k]=humanPlayerInInvDiag;
+                            longestHumanInvDiag=humanPlayerInInvDiag;
+                        }
+
+                        if(AIPlayerInInvDiag>longestAIInvDiag) {
+                            uninterruptedAIinInvDiag[(length-1)-i][k]=AIPlayerInInvDiag;
+                            longestAIInvDiag=AIPlayerInInvDiag;
+                        }
+                        AIPlayerInInvDiag=0;
+                        humanPlayerInInvDiag=0;
+                    }
+                    if(i==k){
+                        if(humanPlayerInDiag>longestHumanDiag) {
+                            uninterruptedPlayerinDiag[i][i]=humanPlayerInDiag;
+                            longestHumanDiag=humanPlayerInDiag;
+                        }
+
+                        if(AIPlayerInDiag>longestAIDiag) {
+                            uninterruptedAIinDiag[i][i]=AIPlayerInDiag;
+                            longestAIDiag=AIPlayerInDiag;
+                        }
+                        AIPlayerInDiag=0;
+                        humanPlayerInDiag=0;
+                    }
                     arrayFreePlacesCol[k]+=1;
                     numFreePlacesRow++;
+                    if(uninterruptedAIInRow[i]>longestAIRow) {
+                        longestAIRow = uninterruptedAIInRow[i];
+                    }
+                    if(uninterruptedAIInCol[k]>longestAICol){
+                        longestAICol=uninterruptedAIInCol[k];
+                    }
+                    if(uninterruptedPlayerInCol[k]>longestHumanCol) {
+                        longestHumanCol=uninterruptedPlayerInCol[k];
+                    }
+                    if(uninterruptedPlayerInRow[i]>longestHumanRow) {
+                        longestHumanRow=uninterruptedPlayerInRow[i];
+                    }
+                    uninterruptedPlayerInRow[i]=0;
+                    uninterruptedAIInRow[i]=0;
                     flagLineUsed=true;
 
                     possiblePosition.add("L_" + i + "_C_" + k);
                     emptyPosition.add(new EmptyPosition(i,k,"L_" + i + "_C_" + k));
                 }
                 if(handPlayed[i][k]==player){
+                    uninterruptedPlayerInRow[i]++;
                     humanPlayerInCol[k]++;
+                    uninterruptedPlayerInCol[k]++;
                     humanPlayerInRow++;
                     numPlayerInRow++;
                 }
                 if(handPlayed[i][k]==player2){
+                    uninterruptedAIInRow[i]++;
+                    uninterruptedAIInCol[k]++;
                     AIPlayerInCol[k]++;
                     AIPlayerInRow++;
                     if(numPlayerInRow==1){
@@ -171,7 +271,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
         }
         //TODO: The empty Position filling routine seems to fail when the number of position is low, I have to look that in detail.
-   //     System.out.println("Gathering of datas done.");
+        System.out.println("Gathering of datas done.");
 
 
         //TODO: The gathering of datas is done, I'll now try to make it useable...
@@ -180,10 +280,53 @@ public class GameBoardDynaAI implements IGameModelDyna{
         // I start by making a check of every position which contains a row or col
         // which have a human player in it and no AI present. I store how many free spaces there are on it, and will decide how to treat
         // the situation based on the number of free spaces left on the row/col.
+        // I had to the total of blocking points possible two more lists which will contain the Diagonal as well as the Inverse Diagonal Positions.
+        // This way, the AI will have less weak points and will be able to defend itself better.
+        // these lists will be used in emergency by the creation of an BlockingPosition object which will be set at null and used if the åparsing through one of the two list
+        // reveals that the Human player succeded in being a threat to the AI in one of the diagonals...Well that's how it should be in theory...
+
+        //Todo: I already have collected the necessary datas in the loops before, the next step is to dissect and use the datas collected.
+        // Thanksfully, as the referential is a cartesian one in a two dimensional array, it is possible to target datas accurately.
+        // I started by parsing the handPlayed array and from it I gathered the necessary datas to fill the number of free places, number of players in each diagonals
+        // as well as if the AI or the player are the only one present on it.
+        // from there, I check if the Human is the sole occupant of either Diagonals and if so, I add an entry in the list of blockingDiagonal or
+        // Blocking inverse diagonal Blocking position list.
+        // there is of course a way to do it more easily, but I just can't find it....
+        // I had to create 3 different constructors in the BlickingPosition class alone in order to accomodate the different set of datas I ended up with needing
+        // of treatment, I couldn't store everything in the same list as the datas showed would have been contradictory at some points.
+        // Especially in the trimming of the list number of entries, as several instances of the same button would show for differents reasons, if for example the row and col
+        // are matching and need to be filled the priority would be two, or three, however the same button
+        for (int i = 0; i < handPlayed.length; i++) {
+            if(handPlayed[i][i]==null) {
+                if(numFreePlacesInDiag!=0){
+                      if(numAIInDiag==0 && numPlayerInDiag!=0) {
+                          blockingDiagPosition.add(new BlockingPosition(getButtonText("L_" + i + "_C_" + i),i,i,arrayNumFreePlacesInRow[i],arrayFreePlacesCol[i]
+                                  ,arrayHumanPlayerInRow[i], uninterruptedPlayerInRow[i],humanPlayerInCol[i], uninterruptedPlayerInCol[i]
+                                  ,arrayAIPlayerInRow[i], uninterruptedAIInRow[i] ,AIPlayerInCol[i], uninterruptedAIInCol[i],numFreePlacesInDiag
+                                  , numPlayerInDiag, uninterruptedPlayerinDiag[i][i], numAIInDiag, uninterruptedAIinDiag[i][i]));
+                      }//blockingPosition.add(new BlockingPosition(getButtonText("L_" + i + "_C_" + h),i,h,arrayNumFreePlacesInRow[i],arrayFreePlacesCol[h]
+                        //    ,arrayHumanPlayerInRow[i],humanPlayerInCol[h],arrayAIPlayerInRow[i],AIPlayerInCol[h]));
+                }
+                if(numFreePlacesInInvDiag!=0) {
+                    if(numAIInInvDiag==0 && numPlayerInInvDiag!=0) {
+                        blockingInvDiagPosition.add(new BlockingPosition(getButtonText("L_" + ((length-1)-i) + "_C_" + i),((length-1)-i),i
+                                ,arrayNumFreePlacesInRow[i],arrayFreePlacesCol[i]
+                                ,arrayHumanPlayerInRow[i], uninterruptedPlayerInRow[i],humanPlayerInCol[i], uninterruptedPlayerInCol[i]
+                                ,arrayAIPlayerInRow[i], uninterruptedAIInRow[i] ,AIPlayerInCol[i], uninterruptedAIInCol[i],numFreePlacesInDiag
+                                , numPlayerInDiag
+                                ,numPlayerInInvDiag, uninterruptedPlayerinInvDiag[(length-1)-i][i], numAIInInvDiag, uninterruptedAIinInvDiag[(length-1)-i][i] ));
+                    }
+                }
+            }
+        }
+
+        //TODO: Here I do the same for the Col and Rows, with the conditions of the rows or columns being empty of
+        // AI input while an input of the player is present.
 
         for (int i = 0; i < handPlayed.length; i++) {
-           // System.out.println("Number of free places in row :"+arrayNumFreePlacesInRow[i]);
+
             for (int k = 0; k < handPlayed.length; k++) {
+
                 if(arrayNumFreePlacesInRow[i]!=0) {
                     if(arrayHumanPlayerInRow[i]!=0 && humanPlayerInCol[k] !=0){
                         for (int h = 0; h < k; h++) {
@@ -211,7 +354,8 @@ public class GameBoardDynaAI implements IGameModelDyna{
                 }
             }
         }
-      //  System.out.println("First sorting of dats done ");
+
+        System.out.println("First sorting of dats done ");
         // Note: That must be what brainfuck means, I aged 10 years sorting my heads out about what to do or try....
         // TODO: I should have in my list only the positions as well as the associated positions which contains only humans player and no AI in it, I also stored the number
         //  of free places contained in its row and columns...should be enough to defend the poor AI...
@@ -231,6 +375,36 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     );
         }
 */
+        for (BlockingPosition buttonName : blockingDiagPosition) {
+            System.out.println(" Button name : "+buttonName.getButton()
+                    +" Row :"+buttonName.getRow()
+                    +" Col : "+buttonName.getCol()
+                    +" free place On ROW : "+buttonName.getFreePlacesOnRow()
+                    +" free place On  COL : "+buttonName.getFreePlacesOnCol()
+                    +" free place on Diag : "+buttonName.getNumFreePlacesInDiag()
+                    +" human player in Diag : "+buttonName.getNumHumanPlayerInDiag()
+                    +" longest Human in Diag : "+buttonName.getUninterruptedPlayerinDiag()
+                    +" Human player In ROW : "+buttonName.getNumHumanPlayerInRow()
+                    +" Human player in COL : "+buttonName.getNumHumanPlayerInCol()
+                    +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
+                    +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
+            );
+        }
+        for (BlockingPosition buttonName : blockingInvDiagPosition) {
+            System.out.println(" Button name : "+buttonName.getButton()
+                    +" Row :"+buttonName.getRow()
+                    +" Col : "+buttonName.getCol()
+                    +" free place On ROW : "+buttonName.getFreePlacesOnRow()
+                    +" free place On  COL : "+buttonName.getFreePlacesOnCol()
+                    +" free place on Inv Diag : "+buttonName.getNumFreePlacesInInvDiag()
+                    +" human player in Inv Diag : "+buttonName.getNumHumanPlayerInInvDiag()
+                    +" Longest Human in Inv Diag ; "+buttonName.getNumHumanPlayerInInvDiag()
+                    +" Human player In ROW : "+buttonName.getNumHumanPlayerInRow()
+                    +" Human player in COL : "+buttonName.getNumHumanPlayerInCol()
+                    +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
+                    +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
+            );
+        }
      /*   System.out.println("--------Array col ----------");
         for (int i = 0; i < arrayFreePlacesCol.length; i++) {
             System.out.println("Col "+i+" has "+arrayFreePlacesCol[i]+"Free spaces");
@@ -241,15 +415,34 @@ public class GameBoardDynaAI implements IGameModelDyna{
         //    priorityList.add(new Pair<>(blockingPosition.get(i),1));
         //}
        // System.out.println("Removing double and factoring them for the priority setup");
+
+        BlockingPosition emergencyPlay=null;
         for (int i = 0; i < blockingPosition.size(); i++) {
             for (int k = 0; k < blockingPosition.size(); k++) {
+
                 if(blockingPosition.get(i).getButton().getId().equals(blockingPosition.get(k).getButton().getId())) {
+                    if((blockingPosition.get(i).getNumAIPlayerInCol()==0 && blockingPosition.get(i).getFreePlacesOnCol()==1) || (blockingPosition.get(i).getNumAIPlayerInRow()==0 && blockingPosition.get(i).getFreePlacesOnRow()==1)){
+                        emergencyPlay=blockingPosition.get(i);
+                    }
                     if(blockingPosition.get(i).getPriority()==0) {
                        blockingPosition.get(i).setPriority(blockingPosition.get(i).getPriority()+1);
+
                     } else {
                         blockingPosition.get(i).setPriority(blockingPosition.get(i).getPriority()+1);
                         blockingPosition.remove(blockingPosition.get(k));
                     }
+                }
+            }
+        }
+        for (int i = 0; i < blockingDiagPosition.size(); i++) {
+            if(blockingDiagPosition.get(i).getNumHumanPlayerInDiag()==2) {
+                emergencyPlay=blockingDiagPosition.get(i);
+            }
+        }
+        if(emergencyPlay==null) {
+            for (int i = 0; i < blockingInvDiagPosition.size(); i++) {
+                if (blockingInvDiagPosition.get(i).getNumHumanPlayerInInvDiag() == 2) {
+                    emergencyPlay = blockingInvDiagPosition.get(i);
                 }
             }
         }
@@ -270,10 +463,16 @@ public class GameBoardDynaAI implements IGameModelDyna{
                     +" AI player in ROW :"+buttonName.getNumAIPlayerInRow()
                     +" AI player in COL :"+ buttonName.getNumAIPlayerInCol()
             );
-        }
+        }*/
 
             blockingPosition.sort(Comparator.comparing(BlockingPosition::getPriority));
 
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getNumAIPlayerInRow));
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getNumHumanPlayerInRow));
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getNumAIPlayerInCol));
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getNumHumanPlayerInCol));
+            blockingPosition.sort(Comparator.comparing(BlockingPosition::getFreePlacesOnRow));
+/*
             System.out.println("After Try Sorting :");
             for (BlockingPosition buttonName : blockingPosition) {
                 System.out.println(" Button name : " + buttonName.getButton()
@@ -293,30 +492,38 @@ public class GameBoardDynaAI implements IGameModelDyna{
         int highestPriority =0;
 
         //TODO: Implement this for later use in the process, as soon as the nextPlayer problem is solved....
-       // System.out.println("Before shuffle");
+        System.out.println("Before shuffle");
         Collections.shuffle(possiblePosition);
         Collections.shuffle(possibleLine);
         Collections.shuffle(possibleColumn);
-
+        Collections.shuffle(blockingPosition);
         //TODO up to here, I need this for the next part of the AI algorythme...
         // Don't know if this will be used, for now it is just a try...
 
         Collections.shuffle(emptyPosition);
         possibleLine= new ArrayList(new HashSet(possibleLine));
         possibleColumn=new ArrayList(new HashSet(possibleColumn));
-        //System.out.println("Blocking size = "+blockingPosition.size());
-        //System.out.println("Empty Position size = "+emptyPosition.size());
-        if(blockingPosition.size()!=0) {
-            handPlayed[blockingPosition.get(blockingPosition.size()-1).getRow()][blockingPosition.get(blockingPosition.size()-1).getCol()] = player2;
-            ticTacViewDyn.setButtonText(blockingPosition.get(blockingPosition.size()-1).getButton().getId(), "A.I");
-        } else if(emptyPosition.size()!=0){
-            Random rand = new Random();
+        System.out.println("Blocking size = "+blockingPosition.size());
+        System.out.println("Empty Position size = "+emptyPosition.size());
+        if(emergencyPlay==null) {
+            if (blockingPosition.size() != 0) {
+                //handPlayed[blockingPosition.get(blockingPosition.size()-1).getRow()][blockingPosition.get(blockingPosition.size()-1).getCol()] = player2;
+                handPlayed[blockingPosition.get(0).getRow()][blockingPosition.get(0).getCol()] = player2;
+                System.out.println("AI PLAYED POSITION : " + blockingPosition.get(0).getButton().getId());
+                ticTacViewDyn.setButtonText(blockingPosition.get(0).getButton().getId(), "A.I");
+            } else if (emptyPosition.size() != 0) {
+                Random rand = new Random();
 
-            handPlayed[blockingPosition.get(rand.nextInt(emptyPosition.size())).getRow()][emptyPosition.get(rand.nextInt(emptyPosition.size())).getCol()] = player2;
-            ticTacViewDyn.setButtonText(emptyPosition.get(rand.nextInt(emptyPosition.size())).getButtonId(), "A.I");
+                handPlayed[blockingPosition.get(rand.nextInt(emptyPosition.size())).getRow()][emptyPosition.get(rand.nextInt(emptyPosition.size())).getCol()] = player2;
+                ticTacViewDyn.setButtonText(emptyPosition.get(rand.nextInt(emptyPosition.size())).getButtonId(), "A.I");
 
-       //     handPlayed[blockingPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getRow()][emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getCol()] = player2;
-       //     ticTacViewDyn.setButtonText(emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getButtonId(), "A.I");
+                //     handPlayed[blockingPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getRow()][emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getCol()] = player2;
+                //     ticTacViewDyn.setButtonText(emptyPosition.get(emptyPosition.size() - 1==0?emptyPosition.size() - 1:0).getButtonId(), "A.I");
+            }
+        } else {
+            handPlayed[emergencyPlay.getRow()][emergencyPlay.getCol()] = player2;
+            System.out.println("Emergency play AI PLAYED POSITION : " + emergencyPlay.getButton().getId());
+            ticTacViewDyn.setButtonText(emergencyPlay.getButton().getId(), "A.I");
         }
        // isGameOver();
         //ticTacViewDyn.setButtonText("L_" + blockingPosition.get(0).getRow() + "_C_"+blockingPosition.get(0).getCol(),"A.I");
@@ -408,6 +615,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
            // System.out.println("GETHEIGHT for "+dp.getName()+" = "+(handPlayed.length-dp.getHeight()));
 
             for (int i = 0; i < handPlayed.length-dp.getHeight()+1; i++) {
+
                 //here I parse through the array representing the BoardGame with an offset on the rows minus the height of the
                 //pattern currently sought, and I add a +1 to the boundary as the difference between the two is an absolute one.
                 // So I have to add 1 to the index in order
@@ -436,6 +644,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
 
 
                 for (int k = 0; k < handPlayed.length-dp.getWidth()+1; k++) {
+
                     //LOTS OF RUBBISH COMMENTS AHEAD, but I can't bear to part with it, it was a determining factor in my succeeding
                     //finding the right borders of the parsing......I'll delete it later....
 
@@ -457,7 +666,9 @@ public class GameBoardDynaAI implements IGameModelDyna{
                                  handPlayed[i+dp.rowPositions.get(2)][k+dp.colPositions.get(2)] ==
                                  handPlayed[i+dp.rowPositions.get(3)][k+dp.colPositions.get(3)] );
 */                  int matchPattern=0;
+
                     for (int j = 0; j < dp.rowPositions.size(); j++) {
+
                         //in order for the pattern to be found successfully,
                         //the matching must be done in the entirety of the points described in its list of relatives coordinates.
                         // So the size of the index of the list must be equal to the index matchPattern which increase by one at
@@ -471,6 +682,7 @@ public class GameBoardDynaAI implements IGameModelDyna{
                             matchPattern=0;
                         }
                     }
+
                     if(matchPattern==dp.rowPositions.size()) {//I can do that because the row and col list have strictly the same size.
                         System.out.println("PATTERN FOUND! ! ! the pattern found is "+dp.getName());
                     }
@@ -482,8 +694,11 @@ public class GameBoardDynaAI implements IGameModelDyna{
                         }*/
                    // }*/
                 }
+
             }
+
         }
+
 
     }
 
