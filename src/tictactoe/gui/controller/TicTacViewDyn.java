@@ -33,7 +33,7 @@ public class TicTacViewDyn implements Initializable {
     public VBox vBoxCenter;
     public BorderPane borderPane;
     int length=6;
-    int OffsetButton= 1;
+    int OffsetButton= 5;
     private static final String TXT_PLAYER = "Player: ";
     private static int gameStarted=0;
     private Boolean[][] handPlayed;
@@ -197,8 +197,8 @@ public class TicTacViewDyn implements Initializable {
                 //btn.setMinWidth(30);
                 //btn.setMinHeight(30);
                 btn.setUserData("");
-                System.out.println("Button size = "+btn.getPrefWidth());
-                System.out.println((btn.getPrefWidth()/length)-10);
+               // System.out.println("Button size = "+btn.getPrefWidth());
+                //System.out.println((btn.getPrefWidth()/length)-10);
                 Font f = Font.font("Verdana", FontWeight.BOLD, (btn.getPrefWidth()/(length+OffsetButton)));
                 btn.setFont(f);
                 btn.setOnAction(e->handleButtonAction(btn));

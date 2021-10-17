@@ -76,7 +76,13 @@ public class BlockingPosition {
         this.numAIInDiag = numAIInDiag;
         this.uninterruptedAIinDiag = uninterruptedAIinDiag;
     }
+    public BlockingPosition(Button button, int row, int col) {
 
+        this.button = button;
+        this.row = row;
+        this.col = col;
+
+    }
     public BlockingPosition(Button button, int row, int col, int freePlacesOnRow, int freePlacesOnCol, int numHumanPlayerInRow,int uninterruptedPlayerInRow
             ,int numHumanPlayerInCol, int uninterruptedPlayerInCol,int numAIPlayerInRow, int uninterruptedAIInRow ,int numAIPlayerInCol,int uninterruptedAIInCol
             , int numFreePlacesInDiag
