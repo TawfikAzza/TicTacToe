@@ -65,8 +65,12 @@ public class GameBoardDynaAI implements IGameModelDyna {
         if (currentPlayer) {
             //System.out.println("TEST COUNT DIAG Left "+countPlayerDiagLeft(handPlayed,row,col,player, winningLength));
             //System.out.println("TEST COUNT DIAG Right "+countPlayerDiagRight(handPlayed,row,col,player, winningLength));
-            System.out.println("TEST COUNT INV DIAG Right "+countPlayerInvDiagRight(handPlayed,row,col,player, winningLength));
+            //System.out.println("TEST COUNT INV DIAG Right "+countPlayerInvDiagRight(handPlayed,row,col,player, winningLength));
             //System.out.println("TEST COUNT INV DIAG Left "+countPlayerInvDiagLeft(handPlayed,row,col,player, winningLength));
+            //System.out.println("TEST COUNT Col UP "+countPlayerColUp(handPlayed,row,col,player, winningLength));
+            //System.out.println("TEST COUNT Col Down "+countPlayerColDown(handPlayed,row,col,player, winningLength));
+            //System.out.println("TEST COUNT row left "+countPlayerRowLeft(handPlayed,row,col,player, winningLength));
+            System.out.println("TEST COUNT row left "+countPlayerRowRight(handPlayed,row,col,player, winningLength));
             if (handPlayed[row][col] == null) {
                 handPlayed[row][col] = player;
                 currentPlayer = false;
@@ -97,37 +101,47 @@ public class GameBoardDynaAI implements IGameModelDyna {
         return false;
     }
 
-    public int countPlayerRowRight(Boolean[][] gameBoard, int row, int colStart, Boolean player) {
+    public int countPlayerRowRight(Boolean[][] gameBoard, int row, int col, Boolean player, int winningLength) {
         int count = 0;
-        for (int k = colStart; k < gameBoard.length; k++) {
+        int steps=0;
+        for (int k = Math.min(col + 1, gameBoard.length); k < gameBoard.length && steps<winningLength; k++) {
+            steps++;
+            System.out.println("Parsing : ["+(row)+"]["+(k)+"]");
             if (gameBoard[row][k] == player) {
                 count++;
             }
         }
         return count;
     }
-    public int countPlayerRowLeft(Boolean[][] gameBoard, int row, int colStop, Boolean player) {
+    public int countPlayerRowLeft(Boolean[][] gameBoard, int row, int col, Boolean player, int winningLength) {
         int count = 0;
-        for (int k = 0; k < colStop; k++) {
+        for (int k = Math.max(col - 1, 0)>=winningLength?winningLength-1:Math.max(col - 1, 0); k>-1; k--) {
+            System.out.println("Parsing : ["+(row)+"]["+(k)+"]");
             if (gameBoard[row][k] == player) {
                 count++;
             }
         }
         return count;
     }
-    public int countPlayerColUp(Boolean[][] gameBoard, int rowStop, int col, Boolean player) {
+    public int countPlayerColUp(Boolean[][] gameBoard, int row, int col, Boolean player,int winningLength) {
         int count = 0;
-        for (int k = 0; k < rowStop; k++) {
+        //System.out.println("Math Row = "+Math.max(row - 1, 0)+" Win Length = "+winningLength);
+        for (int k = (Math.max(row - 1, 0)>=winningLength?winningLength-1:Math.max(row - 1, 0)); k > -1; k--) {
+            System.out.println("Parsing : ["+(k)+"]["+(col)+"]");
             if (gameBoard[k][col] == player) {
                 count++;
             }
         }
+
         return count;
     }
 
-    public int countPlayerColDown(Boolean[][] gameBoard, int rowStart, int col, Boolean player) {
+    public int countPlayerColDown(Boolean[][] gameBoard, int row, int col, Boolean player, int winningLength) {
         int count = 0;
-        for (int k = rowStart; k < gameBoard.length; k++) {
+        int steps=0;
+        for (int k = Math.min(row + 1, gameBoard.length); k < gameBoard.length && steps<winningLength; k++) {
+            steps++;
+            System.out.println("Parsing : ["+(k)+"]["+(col)+"]");
             if (gameBoard[k][col] == player) {
                 count++;
             }
