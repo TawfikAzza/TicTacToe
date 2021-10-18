@@ -384,7 +384,7 @@ public class GameBoardDynaAI implements IGameModelDyna {
         // I start by making a check of every position which contains a row or col
         // which have a human player in it and no AI present. I store how many free spaces there are on it, and will decide how to treat
         // the situation based on the number of free spaces left on the row/col.
-        // I had to the total of blocking points possible two more lists which will contain the Diagonal as well as the Inverse Diagonal Positions.
+        // I add to the total of blocking points possible two more lists which will contain the Diagonal as well as the Inverse Diagonal Positions.
         // This way, the AI will have less weak points and will be able to defend itself better.
         // these lists will be used in emergency by the creation of an BlockingPosition object which will be set at null and used if the åparsing through one of the two list
         // reveals that the Human player succeded in being a threat to the AI in one of the diagonals...Well that's how it should be in theory...
@@ -473,8 +473,8 @@ public class GameBoardDynaAI implements IGameModelDyna {
 
         //TODO: I have to implement The Array List assciated with the attack and the one for the strategies if I can find a way to implement it...
 
-        BlockingPosition emergencyPlay = null;
-        for (int i = 0; i < blockingPosition.size(); i++) {
+       BlockingPosition emergencyPlay = null;
+      /*  for (int i = 0; i < blockingPosition.size(); i++) {
             for (int k = 0; k < blockingPosition.size(); k++) {
 
                 if (blockingPosition.get(i).getButton().getId().equals(blockingPosition.get(k).getButton().getId())) {
@@ -502,7 +502,7 @@ public class GameBoardDynaAI implements IGameModelDyna {
                     emergencyPlay = blockingInvDiagPosition.get(i);
                 }
             }
-        }
+        }*/
         //TODO: I should have an array of priority based on the number of times a button appear on the list of
         // Blocking positions....
         // now to make the AI move according to the order of priority...
@@ -597,9 +597,31 @@ public class GameBoardDynaAI implements IGameModelDyna {
         //by 1 with each X steps, we have a (X,Y) (X+1,Y+1) (X+2,Y+2) (X+3,Y+3) pattern of points, and it translates as the following
         //for the design pattern of the diagonal:
 
+
+        //TODO: the patterns approach seems to bear some fruits, however, the huge amount of entries it necessit, is hard to gauge...
+        // The more I enter the more my tests shows that it is not enough, Next thing to do is to make sure to enter as many designs as possible into the AI
+        // and then make sur it works as it should... but then again, it will not be enough as the priority of the pattern needs to be also set and determined,
+        // I don't know how I will go around to do it...
+
         int[] rowDiagPos = {0, 1, 2, 3};
         int[] colDiagPos = {0, 1, 2, 3};
-        designPatterns.add(new DesignPattern("Diagonal", rowDiagPos, colDiagPos, 4, 4, length));
+        designPatterns.add(new DesignPattern("DiagonalComplete", rowDiagPos, colDiagPos, 4, 4, length));
+
+        int[] rowDiagPos1 = {0, 2, 3};
+        int[] colDiagPos1 = {0, 2, 3};
+        designPatterns.add(new DesignPattern("DiagonalPartial1", rowDiagPos1, colDiagPos1, 4, 4, length, 1,1,3));
+
+        int[] rowDiagPos2 = {0, 1, 3};
+        int[] colDiagPos2 = {0, 1, 3};
+        designPatterns.add(new DesignPattern("DiagonalPartial2", rowDiagPos2, colDiagPos2, 4, 4, length,2,2,3));
+
+        int[] rowDiagPos3 = {0, 1};
+        int[] colDiagPos3 = {0, 1};
+        designPatterns.add(new DesignPattern("DiagonalPartial3", rowDiagPos3, colDiagPos3, 4, 4, length,2,2,2));
+
+        int[] rowDiagPos4 = { 1, 2};
+        int[] colDiagPos4 = { 1, 2};
+        designPatterns.add(new DesignPattern("DiagonalPartial4", rowDiagPos4, colDiagPos4, 4, 4, length,0,0,2));
 
         //For the inverse diagonal, we have a
         // (X+3,Y) (X+2,Y+1) (X+1,Y+2) (X,Y+3) pattern to match the relatives coordinate for the inverse diagonal
@@ -607,19 +629,67 @@ public class GameBoardDynaAI implements IGameModelDyna {
 
         int[] rowInvDiagPos = {3, 2, 1, 0};
         int[] colInvDiagPos = {0, 1, 2, 3};
-        designPatterns.add(new DesignPattern("InvDiagonal", rowInvDiagPos, colInvDiagPos, 4, 4, length));
+        designPatterns.add(new DesignPattern("InvDiagonalComplete", rowInvDiagPos, colInvDiagPos, 4, 4, length));
 
+        int[] rowInvDiagPos1 = {3, 1, 0};
+        int[] colInvDiagPos1 = {0, 2, 3};
+        designPatterns.add(new DesignPattern("InvDiagonalPartial1", rowInvDiagPos1, colInvDiagPos1, 4, 4, length,2,1,3));
+
+        int[] rowInvDiagPos2 = {3, 2, 0};
+        int[] colInvDiagPos2 = {0, 1, 3};
+        designPatterns.add(new DesignPattern("InvDiagonalPartial2", rowInvDiagPos2, colInvDiagPos2, 4, 4, length,1,2,3));
+
+        int[] rowInvDiagPos3 = {3, 2};
+        int[] colInvDiagPos3 = {0, 1};
+        designPatterns.add(new DesignPattern("InvDiagonalPartial3", rowInvDiagPos3, colInvDiagPos3, 4, 4, length,1,2,2));
+
+        int[] rowInvDiagPos4 = {2, 1};
+        int[] colInvDiagPos4 = {1, 2 };
+        designPatterns.add(new DesignPattern("InvDiagonalPartial4", rowInvDiagPos4, colInvDiagPos4, 4, 4, length,3,0,2));
         //For the line, it was actually really simple, we have a pattern like the following.
         //(X,Y) (X+1,Y) (X+2,Y) (X+3,Y)
         int[] rowLinePos = {0, 0, 0, 0};
         int[] colLinePos = {0, 1, 2, 3};
-        designPatterns.add(new DesignPattern("Line", rowLinePos, colLinePos, 4, 1, length));
+        designPatterns.add(new DesignPattern("LineComplete", rowLinePos, colLinePos, 4, 1, length));
+
+        int[] rowLinePos1 = {0, 0, 0};
+        int[] colLinePos1 = {0, 2, 3};
+        designPatterns.add(new DesignPattern("LinePartial1", rowLinePos1, colLinePos1, 4, 1, length,0,1,3));
+
+        int[] rowLinePos2 = {0, 0, 0};
+        int[] colLinePos2 = {0, 1, 3};
+        designPatterns.add(new DesignPattern("LinePartial2", rowLinePos2, colLinePos2, 4, 1, length,0,2,3));
+
+        int[] rowLinePos3 = {0, 0};
+        int[] colLinePos3 = {0, 1};
+        designPatterns.add(new DesignPattern("LinePartial3", rowLinePos3, colLinePos3, 4, 1, length,0,2,2));
+
+        int[] rowLinePos4 = {0, 0};
+        int[] colLinePos4 = {1, 2};
+        designPatterns.add(new DesignPattern("LinePartial4", rowLinePos4, colLinePos4, 4, 1, length,0,0,2));
 
         //For the column, we have a pattern like the following:
         //(X,Y) (X,Y+1) (X,Y+2) (X,Y+3)
         int[] rowVerticalPos = {0, 1, 2, 3};
         int[] colVerticalPos = {0, 0, 0, 0};
-        designPatterns.add(new DesignPattern("Column", rowVerticalPos, colVerticalPos, 1, 4, length));
+        designPatterns.add(new DesignPattern("ColumnComplete", rowVerticalPos, colVerticalPos, 1, 4, length));
+
+        int[] rowVerticalPos1 = {0, 2, 3};
+        int[] colVerticalPos1 = {0, 0, 0};
+        designPatterns.add(new DesignPattern("ColumnPartial1", rowVerticalPos1, colVerticalPos1, 1, 4, length, 1,0,3));
+
+        int[] rowVerticalPos2 = {0, 1, 3};
+        int[] colVerticalPos2 = {0, 0, 0};
+        designPatterns.add(new DesignPattern("ColumnPartial2", rowVerticalPos2, colVerticalPos2, 1, 4, length, 2,0,3));
+
+        int[] rowVerticalPos3 = {0, 1};
+        int[] colVerticalPos3 = {0, 0};
+        designPatterns.add(new DesignPattern("ColumnPartial3", rowVerticalPos3, colVerticalPos3, 1, 4, length, 2,0,2));
+
+        int[] rowVerticalPos4 = {1, 2};
+        int[] colVerticalPos4 = {0, 0};
+        designPatterns.add(new DesignPattern("ColumnPartial4", rowVerticalPos4, colVerticalPos4, 1, 4, length, 0,0,2));
+
 
         // System.out.println("before patterns");
         for (DesignPattern dp : designPatterns) {
@@ -679,9 +749,22 @@ public class GameBoardDynaAI implements IGameModelDyna {
                         if (handPlayed[i + dp.rowPositions.get(j)][k + dp.colPositions.get(j)] == player) {
                             matchPattern++;
                         }
+
+
                     }
-                    if (matchPattern == dp.rowPositions.size()) {//I can do that because the row and col list have strictly the same size.
+                    //TODO:
+                    // I don't think this approach is viable, the pattern approach ask too much input and cases study to be viable especially in an environment where only a streak of 4 garanty the victory.
+                    // The code is becoming messy, clear hint that my logic is wrong somewhere...
+                    // I'll come back to it later
+
+                    if (matchPattern == dp.rowPositions.size() && dp.getName().contains("Partial")) {//I can do that because the row and col list have strictly the same size.
                         System.out.println("PATTERN FOUND! ! ! the pattern found is " + dp.getName());
+                        System.out.println("EmergencyPlay = "+emergencyPlay+" handPlayed = "+handPlayed[i+dp.getRowWin()][k+dp.getColWin()]);
+
+                        if(emergencyPlay==null && handPlayed[i+dp.getRowWin()][k+dp.getColWin()]==null) {
+                            System.out.println("Creating the button.... with i = "+(i+dp.getRowWin())+" And k = "+(k+dp.getColWin()));
+                            emergencyPlay= new BlockingPosition(getButtonText("L_" + (i+dp.getRowWin()) + "_C_" + (k+dp.getColWin())), i+dp.getRowWin(), k+dp.getColWin(),dp);
+                        }
                     }
                     matchPattern = 0;
 

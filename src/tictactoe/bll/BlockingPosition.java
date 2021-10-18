@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 public class BlockingPosition {
 
 
+    private DesignPattern dp;
     private Button button;
     private int row;
     private int col;
@@ -78,6 +79,13 @@ public class BlockingPosition {
     }
     public BlockingPosition(Button button, int row, int col) {
 
+        this.button = button;
+        this.row = row;
+        this.col = col;
+
+    }
+    public BlockingPosition(Button button, int row, int col, DesignPattern dp) {
+        this.dp=dp;
         this.button = button;
         this.row = row;
         this.col = col;

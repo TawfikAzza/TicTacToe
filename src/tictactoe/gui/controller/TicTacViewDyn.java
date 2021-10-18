@@ -32,8 +32,8 @@ public class TicTacViewDyn implements Initializable {
     private IGameModelDyna game;
     public VBox vBoxCenter;
     public BorderPane borderPane;
-    int length=6;
-    int OffsetButton= 5;
+    int length=10;
+    int OffsetButton= 1;
     private static final String TXT_PLAYER = "Player: ";
     private static int gameStarted=0;
     private Boolean[][] handPlayed;
